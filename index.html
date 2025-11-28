@@ -6,947 +6,497 @@
     <title>Claude Code Restart Trajectory Analysis</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-void: #05080f;
-            --bg-surface: #0a1018;
-            --bg-elevated: #101820;
-            --border-dim: #1a2530;
-            --border-accent: #2a3a4a;
-            --text-primary: #e8f0f8;
-            --text-secondary: #8a9aaa;
-            --text-dim: #5a6a7a;
-            --accent-before: #ff6b35;
-            --accent-before-glow: rgba(255, 107, 53, 0.3);
-            --accent-after: #00ff9d;
-            --accent-after-glow: rgba(0, 255, 157, 0.25);
-            --accent-highlight: #ffd700;
-            --accent-cyan: #00d4ff;
+            --bg: #fafafa;
+            --surface: #ffffff;
+            --border: #e0e0e0;
+            --text: #1a1a1a;
+            --text-secondary: #555;
+            --accent-red: #d84315;
+            --accent-green: #2e7d32;
+            --accent-blue: #1565c0;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        html {
-            scroll-behavior: smooth;
-        }
-
         body {
-            font-family: 'Instrument Sans', sans-serif;
-            background: var(--bg-void);
-            color: var(--text-primary);
-            line-height: 1.7;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* Animated grid background */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background:
-                linear-gradient(90deg, var(--border-dim) 1px, transparent 1px),
-                linear-gradient(var(--border-dim) 1px, transparent 1px);
-            background-size: 60px 60px;
-            opacity: 0.15;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        /* Gradient orbs */
-        .orb {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(100px);
-            pointer-events: none;
-            z-index: -1;
-            animation: float 20s ease-in-out infinite;
-        }
-        .orb-1 {
-            width: 600px;
-            height: 600px;
-            background: var(--accent-before-glow);
-            top: -200px;
-            left: -200px;
-        }
-        .orb-2 {
-            width: 500px;
-            height: 500px;
-            background: var(--accent-after-glow);
-            bottom: -150px;
-            right: -150px;
-            animation-delay: -10s;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(30px, 20px) scale(1.1); }
+            font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            font-size: 16px;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 900px;
             margin: 0 auto;
-            padding: 0 2rem;
+            padding: 3rem 1.5rem;
         }
 
-        /* Hero Section */
+        /* Header */
         header {
-            padding: 6rem 0 4rem;
-            position: relative;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
         }
 
-        .label {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--accent-cyan);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            animation: slideIn 0.6s ease-out;
-        }
-
-        .label::before {
-            content: '';
-            width: 24px;
-            height: 1px;
-            background: var(--accent-cyan);
+        .date {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
         }
 
         h1 {
-            font-family: 'Fraunces', serif;
-            font-size: clamp(2.5rem, 6vw, 4.5rem);
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: slideIn 0.6s ease-out 0.1s both;
+            font-size: 2rem;
+            font-weight: 600;
+            line-height: 1.2;
+            margin-bottom: 1rem;
         }
 
         .subtitle {
-            font-size: 1.15rem;
             color: var(--text-secondary);
-            max-width: 700px;
-            animation: slideIn 0.6s ease-out 0.2s both;
+            font-size: 1.1rem;
+            max-width: 600px;
         }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Key Finding */
+        .key-finding {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--accent-blue);
+            padding: 1.5rem;
+            margin-bottom: 3rem;
         }
 
-        /* Giant Stats Display */
-        .hero-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2px;
-            margin: 4rem 0;
-            background: var(--border-dim);
-            border-radius: 2px;
-            overflow: hidden;
-            animation: slideIn 0.6s ease-out 0.3s both;
+        .key-finding h2 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent-blue);
+            margin-bottom: 1rem;
         }
 
-        .hero-stat {
-            background: var(--bg-surface);
-            padding: 3rem 2rem;
-            text-align: center;
-            position: relative;
-            transition: all 0.3s ease;
+        .stats-row {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
         }
 
-        .hero-stat:hover {
-            background: var(--bg-elevated);
-        }
-
-        .hero-stat::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 3px;
-            background: var(--accent-cyan);
-            transition: width 0.3s ease;
-        }
-
-        .hero-stat:hover::after {
-            width: 60%;
+        .stat {
+            text-align: left;
         }
 
         .stat-value {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 600;
-            letter-spacing: -0.02em;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 2rem;
+            font-weight: 500;
+            line-height: 1;
         }
 
-        .stat-value.before { color: var(--accent-before); }
-        .stat-value.after { color: var(--accent-after); }
-        .stat-value.saved { color: var(--accent-highlight); }
+        .stat-value.before { color: var(--accent-red); }
+        .stat-value.after { color: var(--accent-green); }
+        .stat-value.saved { color: var(--text); }
 
         .stat-label {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            color: var(--text-dim);
-            margin-top: 0.75rem;
-        }
-
-        .stat-sub {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             color: var(--text-secondary);
-            margin-top: 0.5rem;
+            margin-top: 0.25rem;
         }
 
-        /* Insight Box */
-        .insight-box {
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.08) 0%, rgba(0, 255, 157, 0.05) 100%);
-            border: 1px solid rgba(0, 212, 255, 0.2);
-            border-radius: 4px;
-            padding: 2rem;
-            margin: 3rem 0;
-            position: relative;
-            animation: slideIn 0.6s ease-out 0.4s both;
+        .insight {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
         }
 
-        .insight-box::before {
-            content: '→';
-            position: absolute;
-            left: -1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1.5rem;
-            color: var(--accent-cyan);
+        /* Section */
+        section {
+            margin-bottom: 3rem;
         }
 
-        .insight-box strong {
-            color: var(--accent-cyan);
-        }
-
-        /* Section Headers */
         h2 {
-            font-family: 'Fraunces', serif;
-            font-size: 2rem;
+            font-size: 1.25rem;
             font-weight: 600;
-            margin: 5rem 0 2rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        h2::before {
-            content: '';
-            width: 4px;
-            height: 1.5em;
-            background: linear-gradient(180deg, var(--accent-cyan), transparent);
-            border-radius: 2px;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--text);
         }
 
         h3 {
-            font-family: 'Instrument Sans', sans-serif;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
         }
 
-        /* Trajectory Comparison */
-        .trajectory-grid {
+        /* Comparison */
+        .comparison {
             display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            gap: 0;
-            margin: 2rem 0;
-            align-items: stretch;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
         }
 
-        @media (max-width: 900px) {
-            .trajectory-grid {
-                grid-template-columns: 1fr;
-            }
-            .trajectory-divider { display: none; }
+        @media (max-width: 600px) {
+            .comparison { grid-template-columns: 1fr; }
         }
 
-        .trajectory-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-dim);
-            padding: 2.5rem;
-            position: relative;
-            overflow: hidden;
+        .trajectory {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
         }
 
-        .trajectory-card.before {
-            border-radius: 4px 0 0 4px;
-            border-right: none;
-        }
+        .trajectory.before { border-top: 3px solid var(--accent-red); }
+        .trajectory.after { border-top: 3px solid var(--accent-green); }
 
-        .trajectory-card.after {
-            border-radius: 0 4px 4px 0;
-            border-left: none;
-        }
-
-        .trajectory-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-        }
-
-        .trajectory-card.before::before {
-            background: linear-gradient(90deg, var(--accent-before), transparent);
-        }
-
-        .trajectory-card.after::before {
-            background: linear-gradient(90deg, transparent, var(--accent-after));
-        }
-
-        .trajectory-badge {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.65rem;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            padding: 0.4rem 0.8rem;
-            border-radius: 2px;
-            display: inline-block;
-            margin-bottom: 1.5rem;
-        }
-
-        .trajectory-badge.before {
-            background: rgba(255, 107, 53, 0.15);
-            color: var(--accent-before);
-            border: 1px solid rgba(255, 107, 53, 0.3);
-        }
-
-        .trajectory-badge.after {
-            background: rgba(0, 255, 157, 0.1);
-            color: var(--accent-after);
-            border: 1px solid rgba(0, 255, 157, 0.25);
+        .trajectory-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 1rem;
         }
 
         .trajectory-title {
-            font-family: 'Fraunces', serif;
-            font-size: 1.5rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
         }
 
         .trajectory-time {
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'IBM Plex Mono', monospace;
             font-size: 0.8rem;
-            color: var(--text-dim);
-            margin-bottom: 2rem;
+            color: var(--text-secondary);
         }
 
         .trajectory-stats {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .trajectory-stat-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid var(--border-dim);
-        }
-
-        .trajectory-stat-row:last-child {
-            border-bottom: none;
-        }
-
-        .trajectory-stat-label {
-            color: var(--text-dim);
-            font-size: 0.85rem;
-        }
-
-        .trajectory-stat-value {
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 500;
-        }
-
-        .trajectory-desc {
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border-dim);
-            color: var(--text-secondary);
             font-size: 0.9rem;
         }
 
-        .trajectory-divider {
-            width: 80px;
+        .trajectory-stat {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg-surface);
-            border-top: 1px solid var(--border-dim);
-            border-bottom: 1px solid var(--border-dim);
-            position: relative;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
         }
 
-        .divider-arrow {
-            font-size: 2rem;
-            color: var(--accent-highlight);
-            animation: pulse 2s ease-in-out infinite;
+        .trajectory-stat:last-child { border-bottom: none; }
+
+        .trajectory-stat-label { color: var(--text-secondary); }
+
+        .trajectory-stat-value {
+            font-family: 'IBM Plex Mono', monospace;
+            font-weight: 500;
         }
 
-        .divider-label {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.65rem;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-top: 0.5rem;
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(0.95); }
-        }
-
-        /* Download Section */
-        .download-grid {
+        /* Downloads */
+        .downloads {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
         }
 
         .download-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-dim);
-            border-radius: 4px;
-            padding: 2rem;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .download-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.03) 0%, transparent 50%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .download-card:hover {
-            border-color: var(--accent-cyan);
-            transform: translateY(-2px);
-        }
-
-        .download-card:hover::before {
-            opacity: 1;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1.25rem;
         }
 
         .download-card h4 {
-            font-family: 'Instrument Sans', sans-serif;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
         }
 
         .download-card p {
-            color: var(--text-secondary);
             font-size: 0.85rem;
-            margin-bottom: 1rem;
-        }
-
-        .download-meta {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            color: var(--text-dim);
-            margin-bottom: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
         }
 
         .download-links {
             display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            letter-spacing: 0.05em;
-            padding: 0.6rem 1.2rem;
-            border-radius: 2px;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
             gap: 0.5rem;
         }
 
-        .btn-primary {
-            background: var(--accent-cyan);
-            color: var(--bg-void);
+        .btn {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            text-decoration: none;
+            border: 1px solid var(--border);
+            color: var(--text);
+            background: var(--bg);
+            transition: all 0.15s;
         }
 
-        .btn-primary:hover {
-            background: #33e0ff;
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        .btn:hover {
+            background: var(--text);
+            color: var(--bg);
+            border-color: var(--text);
         }
 
-        .btn-secondary {
-            background: transparent;
-            color: var(--text-secondary);
-            border: 1px solid var(--border-accent);
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--text-secondary);
-            color: var(--text-primary);
-        }
-
-        /* Analysis Section */
-        .analysis-grid {
-            display: grid;
-            gap: 1px;
-            background: var(--border-dim);
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 2rem 0;
+        /* Analysis */
+        .analysis-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
         }
 
         .analysis-item {
-            background: var(--bg-surface);
-            padding: 2rem;
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 1.5rem;
-            align-items: start;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
         }
 
-        .analysis-number {
-            font-family: 'Fraunces', serif;
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--border-accent);
-            line-height: 1;
+        .analysis-item h3 {
+            color: var(--accent-blue);
         }
 
-        .analysis-content h3 {
-            color: var(--accent-cyan);
+        .analysis-item p {
+            color: var(--text-secondary);
             margin-bottom: 0.75rem;
         }
 
-        .analysis-content p {
+        .analysis-item ul {
+            margin: 0;
+            padding-left: 1.25rem;
+        }
+
+        .analysis-item li {
             color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-
-        .analysis-content ul {
-            list-style: none;
-            margin-top: 1rem;
-        }
-
-        .analysis-content li {
-            padding: 0.5rem 0;
-            padding-left: 1.5rem;
-            position: relative;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .analysis-content li::before {
-            content: '→';
-            position: absolute;
-            left: 0;
-            color: var(--accent-cyan);
+            margin: 0.25rem 0;
         }
 
         /* Conclusions */
         .conclusions {
-            background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-surface) 100%);
-            border: 1px solid var(--border-accent);
-            border-radius: 4px;
-            padding: 3rem;
-            margin: 3rem 0;
-            position: relative;
-        }
-
-        .conclusions::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-before), var(--accent-highlight), var(--accent-after));
-        }
-
-        .conclusions h2 {
-            margin-top: 0;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-top: 3px solid var(--accent-blue);
+            padding: 1.5rem;
         }
 
         .conclusions ol {
-            list-style: none;
-            counter-reset: conclusion;
-            margin: 1.5rem 0;
+            margin: 0 0 1rem 0;
+            padding-left: 1.25rem;
         }
 
         .conclusions li {
-            counter-increment: conclusion;
-            padding: 1rem 0;
-            padding-left: 3rem;
-            position: relative;
-            border-bottom: 1px solid var(--border-dim);
-        }
-
-        .conclusions li:last-child {
-            border-bottom: none;
-        }
-
-        .conclusions li::before {
-            content: counter(conclusion);
-            position: absolute;
-            left: 0;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            width: 1.5rem;
-            height: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--accent-cyan);
-            color: var(--bg-void);
-            border-radius: 2px;
+            margin: 0.75rem 0;
         }
 
         .conclusions li strong {
-            color: var(--text-primary);
+            color: var(--text);
         }
 
         .implication {
-            background: rgba(255, 215, 0, 0.08);
-            border-left: 3px solid var(--accent-highlight);
-            padding: 1.25rem;
-            margin-top: 1.5rem;
+            background: var(--bg);
+            padding: 1rem;
+            border-left: 3px solid var(--accent-green);
             font-size: 0.95rem;
         }
 
-        .implication strong {
-            color: var(--accent-highlight);
-        }
-
-        /* Technical Details */
-        .tech-table {
+        /* Table */
+        table {
             width: 100%;
             border-collapse: collapse;
-            margin: 1.5rem 0;
             font-size: 0.9rem;
         }
 
-        .tech-table th {
+        th, td {
             text-align: left;
-            padding: 1rem;
-            background: var(--bg-elevated);
-            border-bottom: 2px solid var(--accent-cyan);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--accent-cyan);
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
         }
 
-        .tech-table td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-dim);
-        }
-
-        .tech-table tr:hover td {
-            background: var(--bg-surface);
+        th {
+            font-weight: 600;
+            background: var(--bg);
         }
 
         code {
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'IBM Plex Mono', monospace;
             font-size: 0.85em;
-            background: var(--bg-elevated);
-            padding: 0.2rem 0.5rem;
-            border-radius: 2px;
-            color: var(--accent-highlight);
+            background: var(--bg);
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
         }
 
         /* Footer */
         footer {
-            margin-top: 6rem;
-            padding: 3rem 0;
-            border-top: 1px solid var(--border-dim);
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
             text-align: center;
-        }
-
-        footer p {
-            color: var(--text-dim);
+            color: var(--text-secondary);
             font-size: 0.85rem;
-            margin: 0.5rem 0;
         }
 
         footer a {
-            color: var(--accent-cyan);
+            color: var(--accent-blue);
             text-decoration: none;
-            transition: color 0.2s ease;
         }
 
-        footer a:hover {
-            color: var(--text-primary);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero-stats {
-                grid-template-columns: 1fr;
-            }
-
-            .analysis-item {
-                grid-template-columns: 1fr;
-            }
-
-            .analysis-number {
-                font-size: 1.5rem;
-            }
-
-            header {
-                padding: 4rem 0 2rem;
-            }
-        }
+        footer a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-
     <div class="container">
         <header>
-            <div class="label">Research Analysis • November 28, 2025</div>
-            <h1>Claude Code Restart<br>Trajectory Analysis</h1>
-            <p class="subtitle">Comparative analysis of API request trajectories before and after restart, revealing how context accumulation affects token usage in long-running sessions.</p>
+            <div class="date">November 28, 2025</div>
+            <h1>Claude Code Restart Trajectory Analysis</h1>
+            <p class="subtitle">How restarting Claude Code reduces token usage by clearing accumulated context.</p>
         </header>
 
-        <section class="hero-stats">
-            <div class="hero-stat">
-                <div class="stat-value before">151,897</div>
-                <div class="stat-label">Before Restart</div>
-                <div class="stat-sub">Input Tokens</div>
+        <div class="key-finding">
+            <h2>Key Finding</h2>
+            <div class="stats-row">
+                <div class="stat">
+                    <div class="stat-value before">151,897</div>
+                    <div class="stat-label">Before restart</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value after">96,859</div>
+                    <div class="stat-label">After restart</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value saved">−36%</div>
+                    <div class="stat-label">Tokens saved</div>
+                </div>
             </div>
-            <div class="hero-stat">
-                <div class="stat-value after">96,859</div>
-                <div class="stat-label">After Restart</div>
-                <div class="stat-sub">Input Tokens</div>
-            </div>
-            <div class="hero-stat">
-                <div class="stat-value saved">−36%</div>
-                <div class="stat-label">Reduction</div>
-                <div class="stat-sub">55,038 Tokens Saved</div>
+            <p class="insight">Restarting clears accumulated context—embedded file contents, background process notifications, and system reminders—while preserving conversation state.</p>
+        </div>
+
+        <section>
+            <h2>Trajectory Comparison</h2>
+            <div class="comparison">
+                <div class="trajectory before">
+                    <div class="trajectory-header">
+                        <span class="trajectory-title">Before Restart</span>
+                        <span class="trajectory-time">05:24:43 UTC</span>
+                    </div>
+                    <div class="trajectory-stats">
+                        <div class="trajectory-stat">
+                            <span class="trajectory-stat-label">Input Tokens</span>
+                            <span class="trajectory-stat-value" style="color: var(--accent-red)">151,897</span>
+                        </div>
+                        <div class="trajectory-stat">
+                            <span class="trajectory-stat-label">Output Tokens</span>
+                            <span class="trajectory-stat-value">10</span>
+                        </div>
+                        <div class="trajectory-stat">
+                            <span class="trajectory-stat-label">File Size</span>
+                            <span class="trajectory-stat-value">4.08 MB</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="trajectory after">
+                    <div class="trajectory-header">
+                        <span class="trajectory-title">After Restart</span>
+                        <span class="trajectory-time">05:25:53 UTC</span>
+                    </div>
+                    <div class="trajectory-stats">
+                        <div class="trajectory-stat">
+                            <span class="trajectory-stat-label">Input Tokens</span>
+                            <span class="trajectory-stat-value" style="color: var(--accent-green)">96,859</span>
+                        </div>
+                        <div class="trajectory-stat">
+                            <span class="trajectory-stat-label">Output Tokens</span>
+                            <span class="trajectory-stat-value">14</span>
+                        </div>
+                        <div class="trajectory-stat">
+                            <span class="trajectory-stat-label">File Size</span>
+                            <span class="trajectory-stat-value">3.90 MB</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <div class="insight-box">
-            <strong>Key Discovery:</strong> Restarting Claude Code clears accumulated context—embedded file contents, background process notifications, and system reminders—resulting in a 36% reduction in input tokens while preserving the conversation state.
-        </div>
-
-        <h2>Trajectory Comparison</h2>
-
-        <div class="trajectory-grid">
-            <div class="trajectory-card before">
-                <div class="trajectory-badge before">Before</div>
-                <div class="trajectory-title">Bloated Context</div>
-                <div class="trajectory-time">05:24:43 UTC</div>
-
-                <div class="trajectory-stats">
-                    <div class="trajectory-stat-row">
-                        <span class="trajectory-stat-label">Model</span>
-                        <span class="trajectory-stat-value"><code>opus-4-5</code></span>
-                    </div>
-                    <div class="trajectory-stat-row">
-                        <span class="trajectory-stat-label">Input Tokens</span>
-                        <span class="trajectory-stat-value" style="color: var(--accent-before);">151,897</span>
-                    </div>
-                    <div class="trajectory-stat-row">
-                        <span class="trajectory-stat-label">Output Tokens</span>
-                        <span class="trajectory-stat-value">10</span>
-                    </div>
-                    <div class="trajectory-stat-row">
-                        <span class="trajectory-stat-label">Markdown</span>
-                        <span class="trajectory-stat-value">4.08 MB</span>
-                    </div>
-                    <div class="trajectory-stat-row">
-                        <span class="trajectory-stat-label">JSON</span>
-                        <span class="trajectory-stat-value">4.18 MB</span>
+        <section>
+            <h2>Download Files</h2>
+            <div class="downloads">
+                <div class="download-card">
+                    <h4>Before Restart</h4>
+                    <p>151,897 tokens • 4.08 MB</p>
+                    <div class="download-links">
+                        <a href="data/request-2025-11-28T05-24-43-000Z.md" class="btn">Markdown</a>
+                        <a href="data/request-2025-11-28T05-24-43-000Z.json" class="btn">JSON</a>
                     </div>
                 </div>
-
-                <div class="trajectory-desc">
-                    Accumulated file embeddings, 4 background process notifications, repeated system reminders, and unoptimized conversation history.
+                <div class="download-card">
+                    <h4>After Restart</h4>
+                    <p>96,859 tokens • 3.90 MB</p>
+                    <div class="download-links">
+                        <a href="data/request-2025-11-28T05-25-53-000Z.md" class="btn">Markdown</a>
+                        <a href="data/request-2025-11-28T05-25-53-000Z.json" class="btn">JSON</a>
+                    </div>
+                </div>
+                <div class="download-card">
+                    <h4>Text Exports</h4>
+                    <p>Human-readable format</p>
+                    <div class="download-links">
+                        <a href="data/request1-2025-11-28T05-29-28-547Z.txt" class="btn">Before</a>
+                        <a href="data/request2-2025-11-28T05-29-28-547Z.txt" class="btn">After</a>
+                    </div>
                 </div>
             </div>
+        </section>
 
-            <div class="trajectory-divider">
-                <div class="divider-arrow">⟹</div>
-                <div class="divider-label">restart</div>
-            </div>
-
-            <div class="trajectory-card after">
-                <div class="trajectory-badge after">After</div>
-                <div class="trajectory-title">Clean Context</div>
-                <div class="trajectory-time">05:25:53 UTC</div>
-
-                <div class="trajectory-stats">
-                    <div class="trajectory-stat-row">
-                        <span class="trajectory-stat-label">Model</span>
-                        <span class="trajectory-stat-value"><code>opus-4-5</code></span>
-                    </div>
-                    <div class="trajectory-stat-row">
-                        <span class="trajectory-stat-label">Input Tokens</span>
-                        <span class="trajectory-stat-value" style="color: var(--accent-after);">96,859</span>
-                    </div>
-                    <div class="trajectory-stat-row">
-                        <span class="trajectory-stat-label">Output Tokens</span>
-                        <span class="trajectory-stat-value">14</span>
-                    </div>
-                    <div class="trajectory-stat-row">
-                        <span class="trajectory-stat-label">Markdown</span>
-                        <span class="trajectory-stat-value">3.90 MB</span>
-                    </div>
-                    <div class="trajectory-stat-row">
-                        <span class="trajectory-stat-label">JSON</span>
-                        <span class="trajectory-stat-value">3.99 MB</span>
-                    </div>
-                </div>
-
-                <div class="trajectory-desc">
-                    Same conversation state with pruned context—essential history preserved, cruft eliminated.
-                </div>
-            </div>
-        </div>
-
-        <h2>Download Files</h2>
-
-        <div class="download-grid">
-            <div class="download-card">
-                <h4>Before Restart (Bloated)</h4>
-                <p>Complete trajectory with 151,897 input tokens</p>
-                <div class="download-meta">MD: 4.08 MB • JSON: 4.18 MB</div>
-                <div class="download-links">
-                    <a href="data/request-2025-11-28T05-24-43-000Z.md" class="btn btn-primary">↓ Markdown</a>
-                    <a href="data/request-2025-11-28T05-24-43-000Z.json" class="btn btn-secondary">↓ JSON</a>
-                </div>
-            </div>
-
-            <div class="download-card">
-                <h4>After Restart (Clean)</h4>
-                <p>Optimized trajectory with 96,859 input tokens</p>
-                <div class="download-meta">MD: 3.90 MB • JSON: 3.99 MB</div>
-                <div class="download-links">
-                    <a href="data/request-2025-11-28T05-25-53-000Z.md" class="btn btn-primary">↓ Markdown</a>
-                    <a href="data/request-2025-11-28T05-25-53-000Z.json" class="btn btn-secondary">↓ JSON</a>
-                </div>
-            </div>
-
-            <div class="download-card">
-                <h4>Formatted Text Exports</h4>
-                <p>Human-readable dumps with message breakdown</p>
-                <div class="download-meta">TXT: 3.84 MB + 3.72 MB</div>
-                <div class="download-links">
-                    <a href="data/request1-2025-11-28T05-29-28-547Z.txt" class="btn btn-primary">↓ Before</a>
-                    <a href="data/request2-2025-11-28T05-29-28-547Z.txt" class="btn btn-secondary">↓ After</a>
-                </div>
-            </div>
-        </div>
-
-        <h2>Detailed Analysis</h2>
-
-        <div class="analysis-grid">
-            <div class="analysis-item">
-                <div class="analysis-number">01</div>
-                <div class="analysis-content">
+        <section>
+            <h2>Analysis</h2>
+            <div class="analysis-list">
+                <div class="analysis-item">
                     <h3>Token Usage Variance</h3>
-                    <p>Despite originating from the same conversation session, there's a <strong>36% difference</strong> in input tokens. This suggests Claude Code dynamically manages context by selectively including/excluding content based on relevance.</p>
+                    <p>Same conversation, 36% difference in tokens. Claude Code dynamically manages context based on relevance.</p>
                     <ul>
-                        <li><strong>Trajectory A:</strong> 151,897 tokens with full file embeddings</li>
-                        <li><strong>Trajectory B:</strong> 96,859 tokens with summarized content</li>
+                        <li>Before: 151,897 tokens with full file embeddings</li>
+                        <li>After: 96,859 tokens with summarized content</li>
                     </ul>
                 </div>
-            </div>
-
-            <div class="analysis-item">
-                <div class="analysis-number">02</div>
-                <div class="analysis-content">
+                <div class="analysis-item">
                     <h3>System Reminder Accumulation</h3>
-                    <p>Both trajectories contain <code>&lt;system-reminder&gt;</code> tags, but Trajectory A has significantly more. These are injected by Claude Code and accumulate over time.</p>
+                    <p>Both have <code>&lt;system-reminder&gt;</code> tags, but the pre-restart trajectory has many more:</p>
                     <ul>
-                        <li>Background Bash notifications (4 concurrent npm servers)</li>
-                        <li>TodoWrite tool usage reminders</li>
-                        <li>Malware analysis guidance reminders</li>
+                        <li>4 background Bash process notifications</li>
+                        <li>TodoWrite tool reminders</li>
+                        <li>Malware analysis guidance</li>
                     </ul>
                 </div>
-            </div>
-
-            <div class="analysis-item">
-                <div class="analysis-number">03</div>
-                <div class="analysis-content">
-                    <h3>Conversation History Depth</h3>
-                    <p>The formatted exports reveal an interesting pattern: Request 2 has more turns but fewer lines/tokens.</p>
-                    <ul>
-                        <li><strong>Request 1:</strong> 1,769 lines, up to turn [141]</li>
-                        <li><strong>Request 2:</strong> 1,540 lines, up to turn [148]</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="analysis-item">
-                <div class="analysis-number">04</div>
-                <div class="analysis-content">
+                <div class="analysis-item">
                     <h3>Embedded File Content</h3>
-                    <p>A major contributor to token variance is embedded file content from <code>Read</code> tool calls.</p>
+                    <p>Major contributor to bloat: <code>Read</code> tool results.</p>
                     <ul>
-                        <li>Trajectory A: Full <code>_index.tsx</code> (~131KB React component)</li>
-                        <li>Trajectory B: Content summarized or omitted</li>
+                        <li>Before: Full <code>_index.tsx</code> (~131KB)</li>
+                        <li>After: Content omitted or summarized</li>
                     </ul>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="conclusions">
+        <section>
             <h2>Conclusions</h2>
-            <ol>
-                <li><strong>Dynamic Context Management:</strong> API payloads vary significantly within the same session based on content relevance determination.</li>
-                <li><strong>System Overhead:</strong> Background process notifications and reminders add substantial token overhead that compounds over time.</li>
-                <li><strong>File Embedding Impact:</strong> Reading large files into context can increase token usage by 50%+ per request.</li>
-                <li><strong>Context Pruning:</strong> Claude Code prunes older or less relevant content to manage context window limits.</li>
-            </ol>
-
-            <div class="implication">
-                <strong>Practical Implication:</strong> For cost optimization in long-running sessions, consider periodic restarts to clear accumulated context. Be mindful of Read tool usage on large files, and monitor background process overhead.
+            <div class="conclusions">
+                <ol>
+                    <li><strong>Dynamic Context:</strong> Payloads vary significantly within the same session.</li>
+                    <li><strong>System Overhead:</strong> Background processes and reminders compound over time.</li>
+                    <li><strong>File Embedding:</strong> Large file reads can increase tokens by 50%+.</li>
+                    <li><strong>Context Pruning:</strong> Claude Code prunes content to manage limits.</li>
+                </ol>
+                <div class="implication">
+                    <strong>Tip:</strong> For long sessions, periodic restarts reduce cost. Be mindful of reading large files.
+                </div>
             </div>
-        </div>
+        </section>
 
-        <h2>Technical Details</h2>
-
-        <table class="tech-table">
-            <thead>
+        <section>
+            <h2>Technical Details</h2>
+            <table>
                 <tr>
                     <th>Property</th>
                     <th>Value</th>
                 </tr>
-            </thead>
-            <tbody>
                 <tr>
                     <td>Model</td>
                     <td><code>claude-opus-4-5-20251101</code></td>
@@ -956,22 +506,13 @@
                     <td>Claude Code Proxy</td>
                 </tr>
                 <tr>
-                    <td>Project</td>
-                    <td>claude-code-proxy (Monitor UI)</td>
+                    <td>Time Between Captures</td>
+                    <td>~70 seconds</td>
                 </tr>
-                <tr>
-                    <td>Working Directory</td>
-                    <td><code>/Users/ejcampbell/src/claude-code-proxy</code></td>
-                </tr>
-                <tr>
-                    <td>Time Window</td>
-                    <td>~70 seconds between captures</td>
-                </tr>
-            </tbody>
-        </table>
+            </table>
+        </section>
 
         <footer>
-            <p>Generated from Claude Code trajectory analysis</p>
             <p>Source: <a href="https://github.com/ejc3/claude-code-proxy">ejc3/claude-code-proxy</a></p>
         </footer>
     </div>
