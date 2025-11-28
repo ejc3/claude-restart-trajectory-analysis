@@ -234,19 +234,19 @@
     <p><strong>Date:</strong> November 28, 2025</p>
     <p>Comparative analysis of two Claude Code API request trajectories captured from the same conversation, showing how context and token usage differs between requests made at nearly the same time.</p>
 
-    <h2>Key Finding</h2>
+    <h2>Key Finding: Restart Reduces Token Usage by 36%</h2>
     <div class="stat-grid">
         <div class="stat-card">
             <div class="value">151,897</div>
-            <div class="label">Trajectory A Input Tokens</div>
+            <div class="label">Before Restart (Input Tokens)</div>
         </div>
         <div class="stat-card">
             <div class="value">96,859</div>
-            <div class="label">Trajectory B Input Tokens</div>
+            <div class="label">After Restart (Input Tokens)</div>
         </div>
         <div class="stat-card">
             <div class="value">55,038</div>
-            <div class="label">Token Difference (36%)</div>
+            <div class="label">Tokens Saved (36%)</div>
         </div>
         <div class="stat-card">
             <div class="value">~70 sec</div>
@@ -254,10 +254,14 @@
         </div>
     </div>
 
+    <div class="summary-box" style="background: linear-gradient(135deg, #1e3a5f 0%, #2d4a6f 100%); border-color: #3b82f6;">
+        <p style="margin: 0; font-size: 1.1rem;"><strong>Key Insight:</strong> The smaller trajectory (B) is the result <em>after</em> restarting Claude Code. Restarting clears accumulated context like embedded file contents, background process notifications, and system reminders - resulting in a 36% reduction in input tokens for the same conversation state.</p>
+    </div>
+
     <h2>Trajectory Comparison</h2>
     <div class="trajectory-compare">
         <div class="trajectory-card traj-a">
-            <h3><span class="badge badge-orange">A</span> Request 05-24-43</h3>
+            <h3><span class="badge badge-orange">A</span> Before Restart (05-24-43)</h3>
             <table>
                 <tr><td>Model</td><td><code>claude-opus-4-5-20251101</code></td></tr>
                 <tr><td>Input Tokens</td><td><strong>151,897</strong></td></tr>
@@ -265,10 +269,10 @@
                 <tr><td>File Size (MD)</td><td>4.08 MB</td></tr>
                 <tr><td>File Size (JSON)</td><td>4.18 MB</td></tr>
             </table>
-            <p style="margin-top:1rem; color:#94a3b8;">Larger context window with more embedded content and conversation history.</p>
+            <p style="margin-top:1rem; color:#94a3b8;">Bloated context with accumulated file embeddings, background process notifications, and system reminders.</p>
         </div>
         <div class="trajectory-card traj-b">
-            <h3><span class="badge badge-green">B</span> Request 05-25-53</h3>
+            <h3><span class="badge badge-green">B</span> After Restart (05-25-53)</h3>
             <table>
                 <tr><td>Model</td><td><code>claude-opus-4-5-20251101</code></td></tr>
                 <tr><td>Input Tokens</td><td><strong>96,859</strong></td></tr>
@@ -276,21 +280,21 @@
                 <tr><td>File Size (MD)</td><td>3.90 MB</td></tr>
                 <tr><td>File Size (JSON)</td><td>3.99 MB</td></tr>
             </table>
-            <p style="margin-top:1rem; color:#94a3b8;">Smaller context with fewer system reminders and less embedded file content.</p>
+            <p style="margin-top:1rem; color:#94a3b8;">Clean context after restart - same conversation but without accumulated cruft.</p>
         </div>
     </div>
 
     <h2>Download Files</h2>
     <div class="download-grid">
         <div class="download-card">
-            <h4>Trajectory A (Larger Context)</h4>
+            <h4>Before Restart (Bloated)</h4>
             <p>Request from 05:24:43 UTC with 151,897 input tokens</p>
             <div class="size">MD: 4.08 MB | JSON: 4.18 MB</div>
             <a href="data/request-2025-11-28T05-24-43-000Z.md" class="file-link">Markdown</a>
             <a href="data/request-2025-11-28T05-24-43-000Z.json" class="file-link secondary">JSON</a>
         </div>
         <div class="download-card">
-            <h4>Trajectory B (Smaller Context)</h4>
+            <h4>After Restart (Clean)</h4>
             <p>Request from 05:25:53 UTC with 96,859 input tokens</p>
             <div class="size">MD: 3.90 MB | JSON: 3.99 MB</div>
             <a href="data/request-2025-11-28T05-25-53-000Z.md" class="file-link">Markdown</a>
@@ -300,8 +304,8 @@
             <h4>Formatted Text Exports</h4>
             <p>Human-readable trajectory dumps with message breakdown</p>
             <div class="size">TXT: 3.84 MB + 3.72 MB</div>
-            <a href="data/request1-2025-11-28T05-29-28-547Z.txt" class="file-link">Request 1</a>
-            <a href="data/request2-2025-11-28T05-29-28-547Z.txt" class="file-link secondary">Request 2</a>
+            <a href="data/request1-2025-11-28T05-29-28-547Z.txt" class="file-link">Before (Request 1)</a>
+            <a href="data/request2-2025-11-28T05-29-28-547Z.txt" class="file-link secondary">After (Request 2)</a>
         </div>
     </div>
 
