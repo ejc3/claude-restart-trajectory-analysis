@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code Restart Trajectory Analysis</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem;
+            line-height: 1.6;
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+        h1 {
+            color: #f1f5f9;
+            border-bottom: 3px solid #6366f1;
+            padding-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+        h2 {
+            color: #f1f5f9;
+            margin-top: 2.5rem;
+            font-size: 1.5rem;
+        }
+        h3 {
+            color: #cbd5e1;
+            margin-top: 1.5rem;
+        }
+        .summary-box {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            margin: 1.5rem 0;
+            border: 1px solid #334155;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+        }
+        th {
+            background: #6366f1;
+            color: white;
+            font-weight: 600;
+        }
+        tr:hover {
+            background: #334155;
+        }
+        .download-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .download-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 1.25rem;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .download-card:hover {
+            transform: translateY(-2px);
+            border-color: #6366f1;
+        }
+        .download-card h4 {
+            margin: 0 0 0.5rem 0;
+            color: #f1f5f9;
+        }
+        .download-card p {
+            margin: 0 0 1rem 0;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        .download-card .size {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-bottom: 0.75rem;
+        }
+        .file-link {
+            display: inline-block;
+            background: #6366f1;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.875rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            transition: background 0.2s;
+        }
+        .file-link:hover {
+            background: #4f46e5;
+        }
+        .file-link.secondary {
+            background: #475569;
+        }
+        .file-link.secondary:hover {
+            background: #64748b;
+        }
+        .highlight {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .highlight-blue {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .diff-section {
+            background: #1e293b;
+            border-left: 4px solid #06b6d4;
+            padding: 1.25rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .diff-section h3 {
+            margin-top: 0;
+            color: #22d3ee;
+        }
+        code {
+            background: #334155;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            font-size: 0.85em;
+            color: #fbbf24;
+        }
+        .conclusion {
+            background: linear-gradient(135deg, #065f46 0%, #047857 100%);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2.5rem 0;
+        }
+        .conclusion h2 {
+            color: #ecfdf5;
+            margin-top: 0;
+        }
+        .conclusion p, .conclusion li {
+            color: #d1fae5;
+        }
+        ul { padding-left: 1.5rem; }
+        li { margin: 0.5rem 0; }
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .stat-card {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 1.25rem;
+            text-align: center;
+            border: 1px solid #334155;
+        }
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #6366f1;
+        }
+        .stat-card .label {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        .trajectory-compare {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        @media (max-width: 768px) {
+            .trajectory-compare {
+                grid-template-columns: 1fr;
+            }
+        }
+        .trajectory-card {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 2px solid #334155;
+        }
+        .trajectory-card.traj-a {
+            border-color: #f97316;
+        }
+        .trajectory-card.traj-b {
+            border-color: #22c55e;
+        }
+        .trajectory-card h3 {
+            margin-top: 0;
+        }
+        .traj-a h3 { color: #f97316; }
+        .traj-b h3 { color: #22c55e; }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .badge-orange { background: #f97316; color: white; }
+        .badge-green { background: #22c55e; color: white; }
+        footer {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #334155;
+            color: #64748b;
+            font-size: 0.875rem;
+            text-align: center;
+        }
+        a { color: #60a5fa; }
+        a:hover { color: #93c5fd; }
+    </style>
+</head>
+<body>
+    <h1>Claude Code Restart Trajectory Analysis</h1>
+    <p><strong>Date:</strong> November 28, 2025</p>
+    <p>Comparative analysis of two Claude Code API request trajectories captured from the same conversation, showing how context and token usage differs between requests made at nearly the same time.</p>
+
+    <h2>Key Finding</h2>
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="value">151,897</div>
+            <div class="label">Trajectory A Input Tokens</div>
+        </div>
+        <div class="stat-card">
+            <div class="value">96,859</div>
+            <div class="label">Trajectory B Input Tokens</div>
+        </div>
+        <div class="stat-card">
+            <div class="value">55,038</div>
+            <div class="label">Token Difference (36%)</div>
+        </div>
+        <div class="stat-card">
+            <div class="value">~70 sec</div>
+            <div class="label">Time Between Requests</div>
+        </div>
+    </div>
+
+    <h2>Trajectory Comparison</h2>
+    <div class="trajectory-compare">
+        <div class="trajectory-card traj-a">
+            <h3><span class="badge badge-orange">A</span> Request 05-24-43</h3>
+            <table>
+                <tr><td>Model</td><td><code>claude-opus-4-5-20251101</code></td></tr>
+                <tr><td>Input Tokens</td><td><strong>151,897</strong></td></tr>
+                <tr><td>Output Tokens</td><td>10</td></tr>
+                <tr><td>File Size (MD)</td><td>4.08 MB</td></tr>
+                <tr><td>File Size (JSON)</td><td>4.18 MB</td></tr>
+            </table>
+            <p style="margin-top:1rem; color:#94a3b8;">Larger context window with more embedded content and conversation history.</p>
+        </div>
+        <div class="trajectory-card traj-b">
+            <h3><span class="badge badge-green">B</span> Request 05-25-53</h3>
+            <table>
+                <tr><td>Model</td><td><code>claude-opus-4-5-20251101</code></td></tr>
+                <tr><td>Input Tokens</td><td><strong>96,859</strong></td></tr>
+                <tr><td>Output Tokens</td><td>14</td></tr>
+                <tr><td>File Size (MD)</td><td>3.90 MB</td></tr>
+                <tr><td>File Size (JSON)</td><td>3.99 MB</td></tr>
+            </table>
+            <p style="margin-top:1rem; color:#94a3b8;">Smaller context with fewer system reminders and less embedded file content.</p>
+        </div>
+    </div>
+
+    <h2>Download Files</h2>
+    <div class="download-grid">
+        <div class="download-card">
+            <h4>Trajectory A (Larger Context)</h4>
+            <p>Request from 05:24:43 UTC with 151,897 input tokens</p>
+            <div class="size">MD: 4.08 MB | JSON: 4.18 MB</div>
+            <a href="data/request-2025-11-28T05-24-43-000Z.md" class="file-link">Markdown</a>
+            <a href="data/request-2025-11-28T05-24-43-000Z.json" class="file-link secondary">JSON</a>
+        </div>
+        <div class="download-card">
+            <h4>Trajectory B (Smaller Context)</h4>
+            <p>Request from 05:25:53 UTC with 96,859 input tokens</p>
+            <div class="size">MD: 3.90 MB | JSON: 3.99 MB</div>
+            <a href="data/request-2025-11-28T05-25-53-000Z.md" class="file-link">Markdown</a>
+            <a href="data/request-2025-11-28T05-25-53-000Z.json" class="file-link secondary">JSON</a>
+        </div>
+        <div class="download-card">
+            <h4>Formatted Text Exports</h4>
+            <p>Human-readable trajectory dumps with message breakdown</p>
+            <div class="size">TXT: 3.84 MB + 3.72 MB</div>
+            <a href="data/request1-2025-11-28T05-29-28-547Z.txt" class="file-link">Request 1</a>
+            <a href="data/request2-2025-11-28T05-29-28-547Z.txt" class="file-link secondary">Request 2</a>
+        </div>
+    </div>
+
+    <h2>Detailed Analysis</h2>
+
+    <div class="diff-section">
+        <h3>1. Token Usage Variance</h3>
+        <p>Despite being from the same conversation session, there's a <strong>36% difference</strong> in input tokens:</p>
+        <ul>
+            <li><strong>Trajectory A:</strong> 151,897 tokens - includes more embedded file content from Read tool results</li>
+            <li><strong>Trajectory B:</strong> 96,859 tokens - lighter context with fewer tool result embeddings</li>
+        </ul>
+        <p>This suggests Claude Code dynamically manages context window by selectively including/excluding file contents based on relevance.</p>
+    </div>
+
+    <div class="diff-section">
+        <h3>2. System Reminder Accumulation</h3>
+        <p>Both trajectories contain <code>&lt;system-reminder&gt;</code> tags, but Trajectory A has significantly more:</p>
+        <ul>
+            <li>Background Bash process notifications (4 concurrent npm dev servers)</li>
+            <li>TodoWrite tool usage reminders</li>
+            <li>Malware analysis guidance reminders</li>
+        </ul>
+        <p>These reminders are injected by the Claude Code system and accumulate over time, contributing to token bloat.</p>
+    </div>
+
+    <div class="diff-section">
+        <h3>3. Conversation History Depth</h3>
+        <p>The formatted text exports show the conversation structure:</p>
+        <ul>
+            <li><strong>Request 1 (TXT):</strong> 1,769 lines, up to USER/ASSISTANT turn [141]</li>
+            <li><strong>Request 2 (TXT):</strong> 1,540 lines, up to USER/ASSISTANT turn [148]</li>
+        </ul>
+        <p>Interestingly, Request 2 has more conversation turns but fewer lines/tokens, indicating context pruning occurred.</p>
+    </div>
+
+    <div class="diff-section">
+        <h3>4. Embedded File Content</h3>
+        <p>A major contributor to token variance is embedded file content from <code>Read</code> tool calls:</p>
+        <ul>
+            <li>Trajectory A includes full contents of <code>_index.tsx</code> (~131KB React component)</li>
+            <li>Trajectory B has this content summarized or omitted</li>
+        </ul>
+        <p>This demonstrates how tool result caching/summarization affects API payload size.</p>
+    </div>
+
+    <div class="conclusion">
+        <h2>Conclusions</h2>
+        <p>This analysis reveals several important aspects of Claude Code's context management:</p>
+        <ol>
+            <li><strong>Dynamic Context:</strong> API payloads vary significantly even within the same session based on what content is deemed relevant</li>
+            <li><strong>System Overhead:</strong> Background process notifications and system reminders can add substantial token overhead</li>
+            <li><strong>File Embedding Impact:</strong> Reading large files into context can increase token usage by 50%+ </li>
+            <li><strong>Context Pruning:</strong> Claude Code appears to prune older or less relevant content to manage context window limits</li>
+        </ol>
+        <p><strong>Implication:</strong> For cost optimization, consider the impact of Read tool usage on context size, and be aware that background processes generate ongoing notification overhead.</p>
+    </div>
+
+    <h2>Technical Details</h2>
+    <div class="summary-box">
+        <table>
+            <tr><th>Property</th><th>Value</th></tr>
+            <tr><td>Model</td><td><code>claude-opus-4-5-20251101</code></td></tr>
+            <tr><td>Capture Method</td><td>Claude Code Proxy</td></tr>
+            <tr><td>Project</td><td>claude-code-proxy (Claude Code Monitor UI)</td></tr>
+            <tr><td>Working Directory</td><td>/Users/ejcampbell/src/claude-code-proxy</td></tr>
+            <tr><td>Time Window</td><td>~70 seconds between captures</td></tr>
+        </table>
+    </div>
+
+    <footer>
+        <p>Generated from Claude Code trajectory analysis on November 28, 2025</p>
+        <p>Source: <a href="https://github.com/ejc3/claude-code-proxy">ejc3/claude-code-proxy</a></p>
+    </footer>
+</body>
+</html>
