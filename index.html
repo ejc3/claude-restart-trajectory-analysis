@@ -131,6 +131,46 @@
             margin-bottom: 0.75rem;
         }
 
+        /* Example Card */
+        .example-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+        }
+
+        .example-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .example-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .example-badge {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+        }
+
+        .example-badge.dramatic {
+            background: var(--accent-green);
+            color: white;
+        }
+
+        .example-badge.moderate {
+            background: var(--accent-blue);
+            color: white;
+        }
+
         /* Comparison */
         .comparison {
             display: grid;
@@ -143,9 +183,9 @@
         }
 
         .trajectory {
-            background: var(--surface);
+            background: var(--bg);
             border: 1px solid var(--border);
-            padding: 1.5rem;
+            padding: 1.25rem;
         }
 
         .trajectory.before { border-top: 3px solid var(--accent-red); }
@@ -186,6 +226,37 @@
         .trajectory-stat-value {
             font-family: 'IBM Plex Mono', monospace;
             font-weight: 500;
+        }
+
+        .example-summary {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .summary-stat {
+            text-align: center;
+        }
+
+        .summary-value {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .summary-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .download-links-inline {
+            display: flex;
+            gap: 0.5rem;
         }
 
         /* Downloads */
@@ -348,95 +419,211 @@
         </header>
 
         <div class="key-finding">
-            <h2>Key Finding</h2>
-            <div class="stats-row">
-                <div class="stat">
-                    <div class="stat-value before">151,897</div>
-                    <div class="stat-label">Before restart</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-value after">96,859</div>
-                    <div class="stat-label">After restart</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-value saved">−36%</div>
-                    <div class="stat-label">Tokens saved</div>
-                </div>
-            </div>
-            <p class="insight">Restarting clears accumulated context—embedded file contents, background process notifications, and system reminders—while preserving conversation state.</p>
+            <h2>Key Findings</h2>
+            <p class="insight">Restarting Claude Code clears accumulated context - embedded file contents, background process notifications, and system reminders - while preserving essential conversation state. Payload size reduction ranges from <strong>36% to 73%</strong> depending on session activity.</p>
         </div>
 
         <section>
-            <h2>Trajectory Comparison</h2>
-            <div class="comparison">
-                <div class="trajectory before">
-                    <div class="trajectory-header">
-                        <span class="trajectory-title">Before Restart</span>
-                        <span class="trajectory-time">05:24:43 UTC</span>
+            <h2>Example 1: Dramatic Reduction (73%)</h2>
+            <div class="example-card">
+                <div class="example-header">
+                    <span class="example-title">fcvm FUSE Implementation Session</span>
+                    <span class="example-badge dramatic">-73%</span>
+                </div>
+                <div class="comparison">
+                    <div class="trajectory before">
+                        <div class="trajectory-header">
+                            <span class="trajectory-title">Before Restart</span>
+                            <span class="trajectory-time">10:49:20 UTC</span>
+                        </div>
+                        <div class="trajectory-stats">
+                            <div class="trajectory-stat">
+                                <span class="trajectory-stat-label">File Size</span>
+                                <span class="trajectory-stat-value" style="color: var(--accent-red)">272 KB</span>
+                            </div>
+                            <div class="trajectory-stat">
+                                <span class="trajectory-stat-label">System Blocks</span>
+                                <span class="trajectory-stat-value">2 (15.1 KB)</span>
+                            </div>
+                            <div class="trajectory-stat">
+                                <span class="trajectory-stat-label">CLAUDE.md</span>
+                                <span class="trajectory-stat-value">~53 KB</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="trajectory-stats">
-                        <div class="trajectory-stat">
-                            <span class="trajectory-stat-label">Input Tokens</span>
-                            <span class="trajectory-stat-value" style="color: var(--accent-red)">151,897</span>
+                    <div class="trajectory after">
+                        <div class="trajectory-header">
+                            <span class="trajectory-title">After Restart</span>
+                            <span class="trajectory-time">10:49:20 UTC</span>
                         </div>
-                        <div class="trajectory-stat">
-                            <span class="trajectory-stat-label">Output Tokens</span>
-                            <span class="trajectory-stat-value">10</span>
-                        </div>
-                        <div class="trajectory-stat">
-                            <span class="trajectory-stat-label">File Size</span>
-                            <span class="trajectory-stat-value">4.08 MB</span>
+                        <div class="trajectory-stats">
+                            <div class="trajectory-stat">
+                                <span class="trajectory-stat-label">File Size</span>
+                                <span class="trajectory-stat-value" style="color: var(--accent-green)">73 KB</span>
+                            </div>
+                            <div class="trajectory-stat">
+                                <span class="trajectory-stat-label">System Blocks</span>
+                                <span class="trajectory-stat-value">2 (15.0 KB)</span>
+                            </div>
+                            <div class="trajectory-stat">
+                                <span class="trajectory-stat-label">Messages</span>
+                                <span class="trajectory-stat-value">Fresh start</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="trajectory after">
-                    <div class="trajectory-header">
-                        <span class="trajectory-title">After Restart</span>
-                        <span class="trajectory-time">05:25:53 UTC</span>
+                <div class="example-summary">
+                    <div class="summary-stat">
+                        <div class="summary-value" style="color: var(--accent-red)">272 KB</div>
+                        <div class="summary-label">Before</div>
                     </div>
-                    <div class="trajectory-stats">
-                        <div class="trajectory-stat">
-                            <span class="trajectory-stat-label">Input Tokens</span>
-                            <span class="trajectory-stat-value" style="color: var(--accent-green)">96,859</span>
-                        </div>
-                        <div class="trajectory-stat">
-                            <span class="trajectory-stat-label">Output Tokens</span>
-                            <span class="trajectory-stat-value">14</span>
-                        </div>
-                        <div class="trajectory-stat">
-                            <span class="trajectory-stat-label">File Size</span>
-                            <span class="trajectory-stat-value">3.90 MB</span>
-                        </div>
+                    <div class="summary-stat">
+                        <div class="summary-value">&#8594;</div>
+                        <div class="summary-label"></div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-value" style="color: var(--accent-green)">73 KB</div>
+                        <div class="summary-label">After</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-value">199 KB</div>
+                        <div class="summary-label">Saved</div>
+                    </div>
+                    <div class="download-links-inline">
+                        <a href="data/request2-2025-11-28T10-49-20-885Z.txt" class="btn">Before.txt</a>
+                        <a href="data/request1-2025-11-28T10-49-20-885Z.txt" class="btn">After.txt</a>
                     </div>
                 </div>
+            </div>
+            <div class="analysis-item">
+                <h3>What caused the bloat?</h3>
+                <p>Extended coding session with massive CLAUDE.md files and accumulated tool results:</p>
+                <ul>
+                    <li>CLAUDE.md files: ~53KB of project instructions embedded in context</li>
+                    <li>Multiple message conversation history with embedded Read tool results</li>
+                    <li>System reminders about TodoWrite, malware analysis, and file opens</li>
+                    <li>Continuation summary from previous out-of-context session</li>
+                </ul>
             </div>
         </section>
 
         <section>
-            <h2>Download Files</h2>
+            <h2>Example 2: Moderate Reduction (36%)</h2>
+            <div class="example-card">
+                <div class="example-header">
+                    <span class="example-title">Web UI Development Session</span>
+                    <span class="example-badge moderate">-36%</span>
+                </div>
+                <div class="comparison">
+                    <div class="trajectory before">
+                        <div class="trajectory-header">
+                            <span class="trajectory-title">Before Restart</span>
+                            <span class="trajectory-time">05:24:43 UTC</span>
+                        </div>
+                        <div class="trajectory-stats">
+                            <div class="trajectory-stat">
+                                <span class="trajectory-stat-label">Input Tokens</span>
+                                <span class="trajectory-stat-value" style="color: var(--accent-red)">151,897</span>
+                            </div>
+                            <div class="trajectory-stat">
+                                <span class="trajectory-stat-label">Output Tokens</span>
+                                <span class="trajectory-stat-value">10</span>
+                            </div>
+                            <div class="trajectory-stat">
+                                <span class="trajectory-stat-label">File Size</span>
+                                <span class="trajectory-stat-value">4.08 MB</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="trajectory after">
+                        <div class="trajectory-header">
+                            <span class="trajectory-title">After Restart</span>
+                            <span class="trajectory-time">05:25:53 UTC</span>
+                        </div>
+                        <div class="trajectory-stats">
+                            <div class="trajectory-stat">
+                                <span class="trajectory-stat-label">Input Tokens</span>
+                                <span class="trajectory-stat-value" style="color: var(--accent-green)">96,859</span>
+                            </div>
+                            <div class="trajectory-stat">
+                                <span class="trajectory-stat-label">Output Tokens</span>
+                                <span class="trajectory-stat-value">14</span>
+                            </div>
+                            <div class="trajectory-stat">
+                                <span class="trajectory-stat-label">File Size</span>
+                                <span class="trajectory-stat-value">3.90 MB</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="example-summary">
+                    <div class="summary-stat">
+                        <div class="summary-value" style="color: var(--accent-red)">151,897</div>
+                        <div class="summary-label">Before</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-value">&#8594;</div>
+                        <div class="summary-label"></div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-value" style="color: var(--accent-green)">96,859</div>
+                        <div class="summary-label">After</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-value">55,038</div>
+                        <div class="summary-label">Tokens Saved</div>
+                    </div>
+                    <div class="download-links-inline">
+                        <a href="data/request1-2025-11-28T05-29-28-547Z.txt" class="btn">Before.txt</a>
+                        <a href="data/request2-2025-11-28T05-29-28-547Z.txt" class="btn">After.txt</a>
+                    </div>
+                </div>
+            </div>
+            <div class="analysis-item">
+                <h3>What caused the bloat?</h3>
+                <p>Typical development session with file reads and background processes:</p>
+                <ul>
+                    <li>Full <code>_index.tsx</code> file embedded (~131KB)</li>
+                    <li>4 background Bash process notifications</li>
+                    <li>TodoWrite tool reminders</li>
+                    <li>Multiple system reminders accumulated over session</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h2>All Download Files</h2>
             <div class="downloads">
                 <div class="download-card">
-                    <h4>Before Restart</h4>
-                    <p>151,897 tokens • 4.08 MB</p>
+                    <h4>Example 1: Before (73% case)</h4>
+                    <p>272 KB payload</p>
+                    <div class="download-links">
+                        <a href="data/request2-2025-11-28T10-49-20-885Z.txt" class="btn">Text</a>
+                    </div>
+                </div>
+                <div class="download-card">
+                    <h4>Example 1: After (73% case)</h4>
+                    <p>73 KB payload</p>
+                    <div class="download-links">
+                        <a href="data/request1-2025-11-28T10-49-20-885Z.txt" class="btn">Text</a>
+                    </div>
+                </div>
+                <div class="download-card">
+                    <h4>Example 2: Before (36% case)</h4>
+                    <p>151,897 tokens</p>
                     <div class="download-links">
                         <a href="data/request-2025-11-28T05-24-43-000Z.md" class="btn">Markdown</a>
                         <a href="data/request-2025-11-28T05-24-43-000Z.json" class="btn">JSON</a>
+                        <a href="data/request1-2025-11-28T05-29-28-547Z.txt" class="btn">Text</a>
                     </div>
                 </div>
                 <div class="download-card">
-                    <h4>After Restart</h4>
-                    <p>96,859 tokens • 3.90 MB</p>
+                    <h4>Example 2: After (36% case)</h4>
+                    <p>96,859 tokens</p>
                     <div class="download-links">
                         <a href="data/request-2025-11-28T05-25-53-000Z.md" class="btn">Markdown</a>
                         <a href="data/request-2025-11-28T05-25-53-000Z.json" class="btn">JSON</a>
-                    </div>
-                </div>
-                <div class="download-card">
-                    <h4>Text Exports</h4>
-                    <p>Human-readable format</p>
-                    <div class="download-links">
-                        <a href="data/request1-2025-11-28T05-29-28-547Z.txt" class="btn">Before</a>
-                        <a href="data/request2-2025-11-28T05-29-28-547Z.txt" class="btn">After</a>
+                        <a href="data/request2-2025-11-28T05-29-28-547Z.txt" class="btn">Text</a>
                     </div>
                 </div>
             </div>
@@ -446,28 +633,39 @@
             <h2>Analysis</h2>
             <div class="analysis-list">
                 <div class="analysis-item">
-                    <h3>Token Usage Variance</h3>
-                    <p>Same conversation, 36% difference in tokens. Claude Code dynamically manages context based on relevance.</p>
+                    <h3>Payload Size Variance</h3>
+                    <p>Same conversation state, dramatically different payload sizes. Claude Code context accumulates with tool usage and conversation history.</p>
                     <ul>
-                        <li>Before: 151,897 tokens with full file embeddings</li>
-                        <li>After: 96,859 tokens with summarized content</li>
+                        <li>73% case: Long session with massive CLAUDE.md (53KB) and continuation summary</li>
+                        <li>36% case: Moderate session with large file reads and background processes</li>
                     </ul>
                 </div>
                 <div class="analysis-item">
                     <h3>System Reminder Accumulation</h3>
-                    <p>Both have <code>&lt;system-reminder&gt;</code> tags, but the pre-restart trajectory has many more:</p>
+                    <p><code>&lt;system-reminder&gt;</code> tags accumulate during sessions:</p>
                     <ul>
-                        <li>4 background Bash process notifications</li>
+                        <li>Background Bash process notifications (output available)</li>
                         <li>TodoWrite tool reminders</li>
                         <li>Malware analysis guidance</li>
+                        <li>File open notifications from IDE</li>
                     </ul>
                 </div>
                 <div class="analysis-item">
                     <h3>Embedded File Content</h3>
-                    <p>Major contributor to bloat: <code>Read</code> tool results.</p>
+                    <p>Major contributor to bloat: <code>Read</code> tool results stay in context.</p>
                     <ul>
-                        <li>Before: Full <code>_index.tsx</code> (~131KB)</li>
-                        <li>After: Content omitted or summarized</li>
+                        <li>Large source files (args.rs, _index.tsx)</li>
+                        <li>Log files from test runs</li>
+                        <li>CLAUDE.md project instructions</li>
+                    </ul>
+                </div>
+                <div class="analysis-item">
+                    <h3>Continuation Summaries</h3>
+                    <p>When context overflows, Claude Code creates continuation summaries:</p>
+                    <ul>
+                        <li>Previous session context compressed into ~6KB summary</li>
+                        <li>Summaries themselves contribute to next session's context</li>
+                        <li>Multiple continuations compound the overhead</li>
                     </ul>
                 </div>
             </div>
@@ -477,13 +675,14 @@
             <h2>Conclusions</h2>
             <div class="conclusions">
                 <ol>
-                    <li><strong>Dynamic Context:</strong> Payloads vary significantly within the same session.</li>
+                    <li><strong>Dynamic Context:</strong> Payloads vary significantly (36-73%) within similar sessions.</li>
                     <li><strong>System Overhead:</strong> Background processes and reminders compound over time.</li>
-                    <li><strong>File Embedding:</strong> Large file reads can increase tokens by 50%+.</li>
-                    <li><strong>Context Pruning:</strong> Claude Code prunes content to manage limits.</li>
+                    <li><strong>File Embedding:</strong> Large file reads can increase payload size by 50%+.</li>
+                    <li><strong>CLAUDE.md Impact:</strong> Large project instruction files are re-sent every request.</li>
+                    <li><strong>Continuation Tax:</strong> Session continuations add overhead from summaries.</li>
                 </ol>
                 <div class="implication">
-                    <strong>Tip:</strong> For long sessions, periodic restarts reduce cost. Be mindful of reading large files.
+                    <strong>Tip:</strong> For long sessions, periodic restarts reduce cost. Be mindful of reading large files and keep CLAUDE.md files concise.
                 </div>
             </div>
         </section>
@@ -504,8 +703,8 @@
                     <td>Claude Code Proxy</td>
                 </tr>
                 <tr>
-                    <td>Time Between Captures</td>
-                    <td>~70 seconds</td>
+                    <td>Examples Captured</td>
+                    <td>2 before/after pairs</td>
                 </tr>
             </table>
         </section>
